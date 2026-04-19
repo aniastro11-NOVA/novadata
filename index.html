@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>NOVADATA</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1a1a2e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NOVADATA">
+</head>
+<body>
+
+  <div id="main-screen">
+    <header>
+      <div class="header-left">
+        <span class="app-title">🎬 NOVADATA</span>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="search-input" placeholder="해시태그 검색 (예: 달리기, 폭발)" />
+        <button id="search-btn">🔍</button>
+      </div>
+    </header>
+
+    <main>
+      <div id="status-msg" class="status-msg">🔍 검색어를 입력하고 검색 버튼을 눌러주세요</div>
+      <div id="results-grid" class="results-grid"></div>
+    </main>
+  </div>
+
+  <div id="modal" class="modal hidden">
+    <div class="modal-overlay" id="modal-overlay"></div>
+    <div class="modal-content">
+      <button class="modal-close" id="modal-close">✕</button>
+      <div id="modal-media"></div>
+      <div class="modal-info">
+        <h3 id="modal-filename"></h3>
+        <p id="modal-tags"></p>
+        <button id="modal-open-btn" class="btn-primary">구글 드라이브에서 열기</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
