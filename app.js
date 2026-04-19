@@ -70,46 +70,16 @@ function renderGrid(files) {
         <span class="media-badge">${typeLabel}</span>
       </div>
     `;
-    card.addEventListener('click', () => openModal(file));
+    card.addEventListener('click', () => {
+      const isFolder = file.mimeType === 'application/vnd.google-apps.folder';
+      const url = isFolder
+        ? `https://drive.google.com/drive/folders/${file.id}`
+        : `https://drive.google.com/file/d/${file.id}/view`;
+      window.open(url, '_blank');
+    });
     grid.appendChild(card);
   });
 }
-
-let currentFile = null;
-
-function openModal(file) {
-  currentFile = file;
-  const isImage = file.mimeType?.startsWith('image/');
-  const isVideo = file.mimeType?.startsWith('video/');
-  const isFolder = file.mimeType === 'application/vnd.google-apps.folder';
-  let icon = isVideo ? '🎬' : isFolder ? '📁' : '📄';
-
-  document.getElementById('modal-filename').textContent = file.name;
-  document.getElementById('modal-tags').textContent = file.description || '태그 없음';
-  document.getElementById('modal-media').innerHTML =
-    (isImage || isFolder) && file.thumbnailLink
-      ? `<img src="${file.thumbnailLink}" alt="${file.name}" style="width:100%;border-radius:8px;max-height:400px;object-fit:contain;">`
-      : `<div style="text-align:center;padding:40px;font-size:80px">${icon}</div>`;
-
-  document.getElementById('modal').classList.remove('hidden');
-}
-
-document.getElementById('modal-close').addEventListener('click', closeModal);
-document.getElementById('modal-overlay').addEventListener('click', closeModal);
-function closeModal() {
-  document.getElementById('modal').classList.add('hidden');
-  currentFile = null;
-}
-
-document.getElementById('modal-open-btn').addEventListener('click', () => {
-  if (!currentFile) return;
-  const id = currentFile.id;
-  const isFolder = currentFile.mimeType === 'application/vnd.google-apps.folder';
-  const url = isFolder
-    ? `https://drive.google.com/drive/folders/${id}`
-    : `https://drive.google.com/file/d/${id}/view`;
-  window.open(url, '_blank');
-});
 
 function setStatus(msg) {
   document.getElementById('status-msg').textContent = msg;
