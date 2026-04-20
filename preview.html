@@ -6,14 +6,28 @@
   <title>미리보기</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #000; width: 100vw; height: 100dvh; overflow: hidden; }
-    iframe {
+    body {
+      background: #000;
+      width: 100vw;
+      height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #vid {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    #frame {
       position: fixed;
       inset: 0;
       width: 100vw;
       height: 100dvh;
       border: none;
-      display: block;
+      display: none;
     }
     .back-btn {
       position: fixed;
@@ -37,23 +51,25 @@
 </head>
 <body>
   <button class="back-btn" onclick="history.back()">‹</button>
+  <video id="vid" autoplay playsinline controls></video>
   <iframe id="frame" allowfullscreen allow="autoplay; encrypted-media"></iframe>
   <script>
     const p = new URLSearchParams(location.search);
     const id = p.get('id');
     const authuser = p.get('authuser') || '0';
+    const vid = document.getElementById('vid');
+    const frame = document.getElementById('frame');
+
     if (id) {
-      document.getElementById('frame').src =
-        `https://drive.google.com/file/d/${id}/preview?authuser=${authuser}`;
+      vid.src = `https://drive.google.com/uc?id=${id}&export=download&confirm=t`;
+      vid.play().catch(() => {});
+
+      vid.onerror = () => {
+        vid.style.display = 'none';
+        frame.src = `https://drive.google.com/file/d/${id}/preview?authuser=${authuser}`;
+        frame.style.display = 'block';
+      };
     }
-    // 탭하면 전체화면 전환
-    document.getElementById('frame').addEventListener('load', () => {
-      document.body.addEventListener('click', () => {
-        if (document.documentElement.requestFullscreen) {
-          document.documentElement.requestFullscreen().catch(() => {});
-        }
-      }, { once: true });
-    });
   </script>
 </body>
 </html>
