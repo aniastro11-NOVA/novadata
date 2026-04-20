@@ -135,7 +135,9 @@ function openPreview(file) {
     window.location.href = `./preview.html?id=${file.id}${authParam}`;
     return;
   } else if (isImage) {
-    previewThumb.src = `https://drive.google.com/thumbnail?id=${file.id}&sz=w2000`;
+    previewThumb.src = file.thumbnailLink
+      ? file.thumbnailLink.replace(/=s\d+/, '=s2000')
+      : `https://lh3.googleusercontent.com/d/${file.id}`;
     previewThumb.style.display = 'block';
   } else {
     previewTypeIcon.textContent = icon;
