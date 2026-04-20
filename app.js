@@ -131,9 +131,12 @@ function openPreview(file) {
   const account = getPreferredAccount();
   const authParam = account ? `&authuser=${encodeURIComponent(account)}` : '&authuser=0';
 
-  if (isVideo || isImage) {
+  if (isVideo) {
     window.location.href = `./preview.html?id=${file.id}${authParam}`;
     return;
+  } else if (isImage) {
+    previewThumb.src = `https://drive.google.com/thumbnail?id=${file.id}&sz=w2000`;
+    previewThumb.style.display = 'block';
   } else {
     previewTypeIcon.textContent = icon;
   }
