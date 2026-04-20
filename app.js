@@ -5,6 +5,32 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js');
 }
 
+function getPreferredAccount() {
+  return localStorage.getItem('preferred_account') || '';
+}
+
+function buildDriveUrl(file) {
+  const account = getPreferredAccount();
+  const authParam = account ? `?authuser=${encodeURIComponent(account)}` : '';
+  return file.mimeType === 'application/vnd.google-apps.folder'
+    ? `https://drive.google.com/drive/folders/${file.id}${authParam}`
+    : `https://drive.google.com/file/d/${file.id}/view${authParam}`;
+}
+
+document.getElementById('account-btn').addEventListener('click', () => {
+  const current = getPreferredAccount();
+  const input = prompt('구글 드라이브에 사용할 계정 이메일을 입력하세요.\n(비워두면 매번 계정을 물어봅니다)', current);
+  if (input === null) return;
+  const trimmed = input.trim();
+  if (trimmed) {
+    localStorage.setItem('preferred_account', trimmed);
+    setStatus(`✅ 계정 저장됨: ${trimmed}`);
+  } else {
+    localStorage.removeItem('preferred_account');
+    setStatus('계정 설정이 초기화되었습니다.');
+  }
+});
+
 document.getElementById('search-btn').addEventListener('click', doSearch);
 document.getElementById('search-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') doSearch();
@@ -71,11 +97,7 @@ function renderGrid(files) {
       </div>
     `;
     card.addEventListener('click', () => {
-      const isFolder = file.mimeType === 'application/vnd.google-apps.folder';
-      const url = isFolder
-        ? `https://drive.google.com/drive/folders/${file.id}`
-        : `https://drive.google.com/file/d/${file.id}/view`;
-      window.open(url, '_blank');
+      window.open(buildDriveUrl(file), '_blank');
     });
     grid.appendChild(card);
   });
