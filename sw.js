@@ -1,4 +1,4 @@
-const CACHE = 'novadata-v12';
+const CACHE = 'novadata-v13';
 const ASSETS = ['./', './index.html', './preview.html', './app.js', './style.css', './manifest.json'];
 
 self.addEventListener('install', e => {

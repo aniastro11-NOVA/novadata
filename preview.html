@@ -100,7 +100,7 @@
     document.getElementById('poster').addEventListener('click', () => {
       document.getElementById('poster').style.display = 'none';
       const frame = document.getElementById('frame');
-      frame.src = `https://drive.google.com/file/d/${id}/preview?authuser=${authuser}`;
+      frame.src = `https://drive.google.com/file/d/${id}/preview?authuser=${authuser}&autoplay=1`;
       frame.style.display = 'block';
     });
   </script>
