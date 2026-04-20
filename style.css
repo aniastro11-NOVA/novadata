@@ -267,3 +267,80 @@ main {
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+/* 인앱 미리보기 */
+#preview-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+#preview-modal.hidden { display: none; }
+
+.preview-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  backdrop-filter: blur(4px);
+}
+
+.preview-sheet {
+  position: relative;
+  z-index: 201;
+  background: #1e1e30;
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  flex-direction: column;
+  height: 90dvh;
+}
+
+.preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.preview-header span {
+  font-size: 13px;
+  color: #ccc;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.preview-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.preview-actions button {
+  border: none;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+#preview-open-btn { background: #4285f4; color: #fff; }
+#preview-close-btn { background: rgba(255,255,255,0.1); color: #fff; }
+
+.preview-body {
+  flex: 1;
+  overflow: hidden;
+}
+
+#preview-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #000;
+}

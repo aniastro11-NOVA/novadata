@@ -96,9 +96,7 @@ function renderGrid(files) {
         <span class="media-badge">${typeLabel}</span>
       </div>
     `;
-    card.addEventListener('click', () => {
-      window.open(buildDriveUrl(file), '_blank');
-    });
+    card.addEventListener('click', () => openPreview(file));
     grid.appendChild(card);
   });
 }
@@ -106,3 +104,33 @@ function renderGrid(files) {
 function setStatus(msg) {
   document.getElementById('status-msg').textContent = msg;
 }
+
+// 인앱 미리보기 (드라이브 앱 가로채기 방지)
+const previewModal = document.getElementById('preview-modal');
+const previewIframe = document.getElementById('preview-iframe');
+const previewTitle = document.getElementById('preview-title');
+let currentFile = null;
+
+function openPreview(file) {
+  currentFile = file;
+  const isFolder = file.mimeType === 'application/vnd.google-apps.folder';
+  if (isFolder) {
+    window.open(buildDriveUrl(file), '_blank');
+    return;
+  }
+  previewTitle.textContent = file.name;
+  previewIframe.src = `https://drive.google.com/file/d/${file.id}/preview`;
+  previewModal.classList.remove('hidden');
+}
+
+function closePreview() {
+  previewModal.classList.add('hidden');
+  previewIframe.src = '';
+  currentFile = null;
+}
+
+document.getElementById('preview-close-btn').addEventListener('click', closePreview);
+document.getElementById('preview-overlay').addEventListener('click', closePreview);
+document.getElementById('preview-open-btn').addEventListener('click', () => {
+  if (currentFile) window.open(buildDriveUrl(currentFile), '_blank');
+});

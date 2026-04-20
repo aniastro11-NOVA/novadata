@@ -31,6 +31,23 @@
     </main>
   </div>
 
+  <!-- 인앱 미리보기 모달 -->
+  <div id="preview-modal" class="hidden">
+    <div class="preview-overlay" id="preview-overlay"></div>
+    <div class="preview-sheet">
+      <div class="preview-header">
+        <span id="preview-title"></span>
+        <div class="preview-actions">
+          <button id="preview-open-btn">↗ 열기</button>
+          <button id="preview-close-btn">✕</button>
+        </div>
+      </div>
+      <div class="preview-body">
+        <iframe id="preview-iframe" src="" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>
