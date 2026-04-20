@@ -139,7 +139,10 @@ function openPreview(file) {
 
   if (isVideo) {
     const authQ = account ? `&authuser=${encodeURIComponent(account)}` : '&authuser=0';
-    window.location.href = `./preview.html?id=${file.id}${authQ}`;
+    const thumb = file.thumbnailLink
+      ? `&thumb=${encodeURIComponent(file.thumbnailLink.replace(/=s\d+/, '=s1600'))}`
+      : '';
+    window.location.href = `./preview.html?id=${file.id}${authQ}${thumb}`;
     return;
   } else if (isImage) {
     const thumb = file.thumbnailLink
