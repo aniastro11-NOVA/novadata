@@ -131,11 +131,21 @@ function openPreview(file) {
   const account = getPreferredAccount();
   const authParam = account ? `&authuser=${encodeURIComponent(account)}` : '&authuser=0';
 
+  if (isFolder) {
+    const authQ = account ? `?authuser=${encodeURIComponent(account)}` : '?authuser=0';
+    window.open(`https://drive.google.com/drive/folders/${file.id}${authQ}`, '_blank');
+    return;
+  }
+
   if (isVideo) {
-    window.location.href = `./preview.html?id=${file.id}${authParam}`;
+    const authQ = account ? `&authuser=${encodeURIComponent(account)}` : '&authuser=0';
+    window.location.href = `./preview.html?id=${file.id}${authQ}`;
     return;
   } else if (isImage) {
-    previewThumb.src = `https://drive.google.com/uc?id=${file.id}`;
+    const thumb = file.thumbnailLink
+      ? file.thumbnailLink.replace(/=s\d+/, '=s1600')
+      : `https://drive.google.com/uc?id=${file.id}&export=view`;
+    previewThumb.src = thumb;
     previewThumb.style.display = 'block';
   } else {
     previewTypeIcon.textContent = icon;
