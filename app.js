@@ -108,29 +108,40 @@ function setStatus(msg) {
 // 인앱 미리보기 — drive.google.com URL 로드 없음 (계정 선택창 방지)
 const previewModal = document.getElementById('preview-modal');
 const previewThumb = document.getElementById('preview-thumb');
+const previewVideo = document.getElementById('preview-video');
 const previewTypeIcon = document.getElementById('preview-type-icon');
 const previewTitle = document.getElementById('preview-title');
 const previewTags = document.getElementById('preview-tags');
 let currentFile = null;
 
+function mediaUrl(file) {
+  return `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media&key=${API_KEY}`;
+}
+
 function openPreview(file) {
   currentFile = file;
-  const isFolder = file.mimeType === 'application/vnd.google-apps.folder';
-  const isImage = file.mimeType?.startsWith('image/');
   const isVideo = file.mimeType?.startsWith('video/');
+  const isImage = file.mimeType?.startsWith('image/');
+  const isFolder = file.mimeType === 'application/vnd.google-apps.folder';
   const icon = isImage ? '🖼️' : isVideo ? '🎬' : isFolder ? '📁' : '📄';
 
   previewTitle.textContent = file.name;
   previewTags.textContent = (file.description?.match(/#\S+/g) || []).join(' ');
 
-  if (file.thumbnailLink) {
-    const largeThumb = file.thumbnailLink.replace(/=s\d+/, '=s1600');
-    previewThumb.src = largeThumb;
+  previewThumb.style.display = 'none';
+  previewVideo.style.display = 'none';
+  previewTypeIcon.textContent = '';
+
+  if (isVideo) {
+    previewVideo.src = mediaUrl(file);
+    previewVideo.style.display = 'block';
+  } else if (isImage) {
+    previewThumb.src = mediaUrl(file);
     previewThumb.style.display = 'block';
-    previewTypeIcon.textContent = '';
+  } else if (file.thumbnailLink) {
+    previewThumb.src = file.thumbnailLink.replace(/=s\d+/, '=s1600');
+    previewThumb.style.display = 'block';
   } else {
-    previewThumb.src = '';
-    previewThumb.style.display = 'none';
     previewTypeIcon.textContent = icon;
   }
 
@@ -140,6 +151,8 @@ function openPreview(file) {
 function closePreview() {
   previewModal.classList.add('hidden');
   previewThumb.src = '';
+  previewVideo.pause();
+  previewVideo.src = '';
   currentFile = null;
 }
 
