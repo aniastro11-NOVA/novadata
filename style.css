@@ -274,20 +274,22 @@ main {
 #preview-modal.hidden { display: none; }
 
 #preview-thumb {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   max-width: 100%;
   max-height: 100%;
   width: auto;
   height: auto;
-  display: block;
 }
 
 #preview-video {
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background: #000;
-  display: block;
 }
 
 #preview-type-icon {

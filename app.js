@@ -115,7 +115,7 @@ const previewTags = document.getElementById('preview-tags');
 let currentFile = null;
 
 function mediaUrl(file) {
-  return `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media&key=${API_KEY}`;
+  return `https://drive.google.com/uc?id=${file.id}&export=download`;
 }
 
 function openPreview(file) {
@@ -133,8 +133,20 @@ function openPreview(file) {
   previewTypeIcon.textContent = '';
 
   if (isVideo) {
+    previewVideo.removeAttribute('style');
     previewVideo.src = mediaUrl(file);
     previewVideo.style.display = 'block';
+    previewVideo.onloadedmetadata = () => {
+      const vRatio = previewVideo.videoWidth / previewVideo.videoHeight;
+      const sRatio = window.innerWidth / window.innerHeight;
+      if (vRatio > sRatio) {
+        previewVideo.style.width = '100%';
+        previewVideo.style.height = 'auto';
+      } else {
+        previewVideo.style.height = '100%';
+        previewVideo.style.width = 'auto';
+      }
+    };
   } else if (isImage) {
     previewThumb.src = mediaUrl(file);
     previewThumb.style.display = 'block';
