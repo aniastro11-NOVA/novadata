@@ -115,7 +115,7 @@ const previewTags = document.getElementById('preview-tags');
 let currentFile = null;
 
 function mediaUrl(file) {
-  return `https://drive.google.com/uc?id=${file.id}&export=download`;
+  return `https://lh3.googleusercontent.com/d/${file.id}`;
 }
 
 function openPreview(file) {
