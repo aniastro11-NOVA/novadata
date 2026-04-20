@@ -114,7 +114,11 @@ async function doSearch() {
   }
 }
 
+let currentFiles = [];
+let currentFileIndex = -1;
+
 function renderGrid(files) {
+  currentFiles = files;
   const grid = document.getElementById('results-grid');
   files.forEach(file => {
     const card = document.createElement('div');
@@ -160,6 +164,7 @@ let currentFile = null;
 
 function openPreview(file) {
   currentFile = file;
+  currentFileIndex = currentFiles.findIndex(f => f.id === file.id);
   const isVideo = file.mimeType?.startsWith('video/');
   const isImage = file.mimeType?.startsWith('image/');
   const isFolder = file.mimeType === 'application/vnd.google-apps.folder';
@@ -208,6 +213,24 @@ function closePreview() {
 }
 
 document.getElementById('preview-close-btn').addEventListener('click', closePreview);
+
+let swipeStartX = 0;
+previewModal.addEventListener('touchstart', e => {
+  swipeStartX = e.changedTouches[0].clientX;
+}, { passive: true });
+previewModal.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - swipeStartX;
+  if (Math.abs(dx) < 60) return;
+  const dir = dx < 0 ? 1 : -1;
+  let idx = currentFileIndex + dir;
+  while (idx >= 0 && idx < currentFiles.length) {
+    if (currentFiles[idx].mimeType?.startsWith('image/')) {
+      openPreview(currentFiles[idx]);
+      return;
+    }
+    idx += dir;
+  }
+});
 
 document.getElementById('preview-share-btn').addEventListener('click', async () => {
   if (!currentFile) return;
