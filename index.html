@@ -35,15 +35,18 @@
   <div id="preview-modal" class="hidden">
     <div class="preview-overlay" id="preview-overlay"></div>
     <div class="preview-sheet">
-      <div class="preview-header">
-        <span id="preview-title"></span>
-        <div class="preview-actions">
-          <button id="preview-open-btn">↗ 열기</button>
-          <button id="preview-close-btn">✕</button>
-        </div>
+      <button id="preview-close-btn">✕</button>
+      <div class="preview-thumb-wrap">
+        <img id="preview-thumb" src="" alt="" />
+        <div id="preview-type-icon"></div>
       </div>
-      <div class="preview-body">
-        <iframe id="preview-iframe" src="" allowfullscreen></iframe>
+      <div class="preview-info">
+        <div id="preview-title"></div>
+        <div id="preview-tags"></div>
+      </div>
+      <div class="preview-btns">
+        <button id="preview-share-btn">공유하기</button>
+        <button id="preview-copy-btn">링크 복사</button>
       </div>
     </div>
   </div>

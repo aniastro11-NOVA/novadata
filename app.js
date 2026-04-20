@@ -105,32 +105,65 @@ function setStatus(msg) {
   document.getElementById('status-msg').textContent = msg;
 }
 
-// 인앱 미리보기 (드라이브 앱 가로채기 방지)
+// 인앱 미리보기 — drive.google.com URL 로드 없음 (계정 선택창 방지)
 const previewModal = document.getElementById('preview-modal');
-const previewIframe = document.getElementById('preview-iframe');
+const previewThumb = document.getElementById('preview-thumb');
+const previewTypeIcon = document.getElementById('preview-type-icon');
 const previewTitle = document.getElementById('preview-title');
+const previewTags = document.getElementById('preview-tags');
 let currentFile = null;
 
 function openPreview(file) {
   currentFile = file;
   const isFolder = file.mimeType === 'application/vnd.google-apps.folder';
-  if (isFolder) {
-    window.open(buildDriveUrl(file), '_blank');
-    return;
-  }
+  const isImage = file.mimeType?.startsWith('image/');
+  const isVideo = file.mimeType?.startsWith('video/');
+  const icon = isImage ? '🖼️' : isVideo ? '🎬' : isFolder ? '📁' : '📄';
+
   previewTitle.textContent = file.name;
-  previewIframe.src = `https://drive.google.com/file/d/${file.id}/preview`;
+  previewTags.textContent = (file.description?.match(/#\S+/g) || []).join(' ');
+
+  if (file.thumbnailLink) {
+    const largeThumb = file.thumbnailLink.replace(/=s\d+/, '=s1600');
+    previewThumb.src = largeThumb;
+    previewThumb.style.display = 'block';
+    previewTypeIcon.textContent = '';
+  } else {
+    previewThumb.src = '';
+    previewThumb.style.display = 'none';
+    previewTypeIcon.textContent = icon;
+  }
+
   previewModal.classList.remove('hidden');
 }
 
 function closePreview() {
   previewModal.classList.add('hidden');
-  previewIframe.src = '';
+  previewThumb.src = '';
   currentFile = null;
 }
 
 document.getElementById('preview-close-btn').addEventListener('click', closePreview);
 document.getElementById('preview-overlay').addEventListener('click', closePreview);
-document.getElementById('preview-open-btn').addEventListener('click', () => {
-  if (currentFile) window.open(buildDriveUrl(currentFile), '_blank');
+
+document.getElementById('preview-share-btn').addEventListener('click', async () => {
+  if (!currentFile) return;
+  const url = buildDriveUrl(currentFile);
+  if (navigator.share) {
+    await navigator.share({ title: currentFile.name, url });
+  } else {
+    window.open(url, '_blank');
+  }
+});
+
+document.getElementById('preview-copy-btn').addEventListener('click', async () => {
+  if (!currentFile) return;
+  const url = buildDriveUrl(currentFile);
+  try {
+    await navigator.clipboard.writeText(url);
+    document.getElementById('preview-copy-btn').textContent = '✅ 복사됨';
+    setTimeout(() => document.getElementById('preview-copy-btn').textContent = '링크 복사', 2000);
+  } catch {
+    window.open(url, '_blank');
+  }
 });
