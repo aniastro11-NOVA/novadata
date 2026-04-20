@@ -46,6 +46,14 @@
       document.getElementById('frame').src =
         `https://drive.google.com/file/d/${id}/preview?authuser=${authuser}`;
     }
+    // 탭하면 전체화면 전환
+    document.getElementById('frame').addEventListener('load', () => {
+      document.body.addEventListener('click', () => {
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        }
+      }, { once: true });
+    });
   </script>
 </body>
 </html>
