@@ -131,14 +131,9 @@ function openPreview(file) {
   const account = getPreferredAccount();
   const authParam = account ? `&authuser=${encodeURIComponent(account)}` : '&authuser=0';
 
-  if (isVideo) {
+  if (isVideo || isImage) {
     window.location.href = `./preview.html?id=${file.id}${authParam}`;
     return;
-  } else if (isImage) {
-    previewThumb.src = file.thumbnailLink
-      ? file.thumbnailLink.replace(/=s\d+/, '=s2000')
-      : `https://lh3.googleusercontent.com/d/${file.id}`;
-    previewThumb.style.display = 'block';
   } else {
     previewTypeIcon.textContent = icon;
   }
