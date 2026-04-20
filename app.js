@@ -129,13 +129,12 @@ function openPreview(file) {
   previewTypeIcon.textContent = '';
 
   const account = getPreferredAccount();
-  const authParam = account ? `?authuser=${encodeURIComponent(account)}` : '?authuser=0';
+  const authParam = account ? `&authuser=${encodeURIComponent(account)}` : '&authuser=0';
 
   if (isVideo) {
-    previewIframe.src = `https://drive.google.com/file/d/${file.id}/preview${authParam}`;
-    previewIframe.style.display = 'block';
+    window.location.href = `./preview.html?id=${file.id}${authParam}`;
+    return;
   } else if (isImage) {
-    previewThumb.src = `https://drive.google.com/file/d/${file.id}/preview${authParam}`.replace('/preview', '/view').replace('view', 'thumbnail?id=' + file.id + '&sz=w2000');
     previewThumb.src = file.thumbnailLink
       ? file.thumbnailLink.replace(/=s\d+/, '=s2000')
       : `https://lh3.googleusercontent.com/d/${file.id}`;

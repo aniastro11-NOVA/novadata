@@ -1,5 +1,5 @@
-const CACHE = 'novadata-v3';
-const ASSETS = ['./', './index.html', './app.js', './style.css', './manifest.json'];
+const CACHE = 'novadata-v4';
+const ASSETS = ['./', './index.html', './preview.html', './app.js', './style.css', './manifest.json'];
 
 self.addEventListener('install', e => {
   self.skipWaiting();
