@@ -36,10 +36,54 @@ document.getElementById('search-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') doSearch();
 });
 
+let folderStack = [];
+
+function updateFolderNav() {
+  document.getElementById('folder-back-btn').classList.toggle('hidden', folderStack.length === 0);
+}
+
+document.getElementById('folder-back-btn').addEventListener('click', async () => {
+  folderStack.pop();
+  if (folderStack.length === 0) {
+    updateFolderNav();
+    document.getElementById('results-grid').innerHTML = '';
+    setStatus('🔍 검색어를 입력하고 검색 버튼을 눌러주세요');
+  } else {
+    const parent = folderStack[folderStack.length - 1];
+    await loadFolderContents(parent.id, parent.name);
+  }
+});
+
+async function openFolder(folder) {
+  folderStack.push({ id: folder.id, name: folder.name });
+  await loadFolderContents(folder.id, folder.name);
+}
+
+async function loadFolderContents(folderId, folderName) {
+  document.getElementById('results-grid').innerHTML = '';
+  setStatus('📂 불러오는 중...');
+  updateFolderNav();
+  try {
+    const q = encodeURIComponent(`'${folderId}' in parents and trashed = false`);
+    const fields = encodeURIComponent('files(id,name,mimeType,description,thumbnailLink)');
+    const url = `https://www.googleapis.com/drive/v3/files?q=${q}&fields=${fields}&pageSize=1000&key=${API_KEY}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`API 오류: ${res.status}`);
+    const data = await res.json();
+    const files = data.files || [];
+    setStatus(files.length === 0 ? `📂 ${folderName} — 비어있음` : `📂 ${folderName} — ${files.length}개`);
+    if (files.length > 0) renderGrid(files);
+  } catch (err) {
+    setStatus('❌ 오류: ' + err.message);
+  }
+}
+
 async function doSearch() {
   const keyword = document.getElementById('search-input').value.trim();
   if (!keyword) return;
 
+  folderStack = [];
+  updateFolderNav();
   const grid = document.getElementById('results-grid');
   grid.innerHTML = '';
   setStatus('🔍 검색 중...');
@@ -132,8 +176,7 @@ function openPreview(file) {
   const authParam = account ? `&authuser=${encodeURIComponent(account)}` : '&authuser=0';
 
   if (isFolder) {
-    const authQ = account ? `?authuser=${encodeURIComponent(account)}` : '?authuser=0';
-    window.open(`https://drive.google.com/drive/folders/${file.id}${authQ}`, '_blank');
+    openFolder(file);
     return;
   }
 
