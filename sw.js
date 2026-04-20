@@ -1,4 +1,4 @@
-const CACHE = 'novadata-v19';
+const CACHE = 'novadata-v20';
 const ASSETS = ['./', './index.html', './preview.html', './app.js', './style.css', './manifest.json'];
 
 self.addEventListener('install', e => {
@@ -10,7 +10,11 @@ self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
       Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    ).then(() => self.clients.claim()).then(() =>
+      self.clients.matchAll({ type: 'window' }).then(clients =>
+        clients.forEach(client => client.navigate(client.url))
+      )
+    )
   );
 });
 
