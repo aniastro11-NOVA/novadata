@@ -157,7 +157,6 @@ function closePreview() {
 }
 
 document.getElementById('preview-close-btn').addEventListener('click', closePreview);
-document.getElementById('preview-overlay').addEventListener('click', closePreview);
 
 document.getElementById('preview-share-btn').addEventListener('click', async () => {
   if (!currentFile) return;
