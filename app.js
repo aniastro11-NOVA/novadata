@@ -186,8 +186,8 @@ function openPreview(file) {
   }
 
   if (isVideo) {
-    const authQ = account ? `?authuser=${encodeURIComponent(account)}` : '?authuser=0';
-    window.open(`https://drive.google.com/file/d/${file.id}/preview${authQ}`, '_blank');
+    const authQ = account ? `&authuser=${encodeURIComponent(account)}` : '&authuser=0';
+    window.location.href = `./preview.html?id=${file.id}${authQ}`;
     return;
   } else if (isImage) {
     const thumb = file.thumbnailLink
