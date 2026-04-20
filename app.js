@@ -108,15 +108,11 @@ function setStatus(msg) {
 // 인앱 미리보기 — drive.google.com URL 로드 없음 (계정 선택창 방지)
 const previewModal = document.getElementById('preview-modal');
 const previewThumb = document.getElementById('preview-thumb');
-const previewVideo = document.getElementById('preview-video');
+const previewIframe = document.getElementById('preview-iframe');
 const previewTypeIcon = document.getElementById('preview-type-icon');
 const previewTitle = document.getElementById('preview-title');
 const previewTags = document.getElementById('preview-tags');
 let currentFile = null;
-
-function mediaUrl(file) {
-  return `https://lh3.googleusercontent.com/d/${file.id}`;
-}
 
 function openPreview(file) {
   currentFile = file;
@@ -129,29 +125,20 @@ function openPreview(file) {
   previewTags.textContent = (file.description?.match(/#\S+/g) || []).join(' ');
 
   previewThumb.style.display = 'none';
-  previewVideo.style.display = 'none';
+  previewIframe.style.display = 'none';
   previewTypeIcon.textContent = '';
 
+  const account = getPreferredAccount();
+  const authParam = account ? `?authuser=${encodeURIComponent(account)}` : '?authuser=0';
+
   if (isVideo) {
-    previewVideo.removeAttribute('style');
-    previewVideo.src = mediaUrl(file);
-    previewVideo.style.display = 'block';
-    previewVideo.onloadedmetadata = () => {
-      const vRatio = previewVideo.videoWidth / previewVideo.videoHeight;
-      const sRatio = window.innerWidth / window.innerHeight;
-      if (vRatio > sRatio) {
-        previewVideo.style.width = '100%';
-        previewVideo.style.height = 'auto';
-      } else {
-        previewVideo.style.height = '100%';
-        previewVideo.style.width = 'auto';
-      }
-    };
+    previewIframe.src = `https://drive.google.com/file/d/${file.id}/preview${authParam}`;
+    previewIframe.style.display = 'block';
   } else if (isImage) {
-    previewThumb.src = mediaUrl(file);
-    previewThumb.style.display = 'block';
-  } else if (file.thumbnailLink) {
-    previewThumb.src = file.thumbnailLink.replace(/=s\d+/, '=s1600');
+    previewThumb.src = `https://drive.google.com/file/d/${file.id}/preview${authParam}`.replace('/preview', '/view').replace('view', 'thumbnail?id=' + file.id + '&sz=w2000');
+    previewThumb.src = file.thumbnailLink
+      ? file.thumbnailLink.replace(/=s\d+/, '=s2000')
+      : `https://lh3.googleusercontent.com/d/${file.id}`;
     previewThumb.style.display = 'block';
   } else {
     previewTypeIcon.textContent = icon;
@@ -163,8 +150,7 @@ function openPreview(file) {
 function closePreview() {
   previewModal.classList.add('hidden');
   previewThumb.src = '';
-  previewVideo.pause();
-  previewVideo.src = '';
+  previewIframe.src = '';
   currentFile = null;
 }
 
