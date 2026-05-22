@@ -32,10 +32,30 @@
       justify-content: center;
       backdrop-filter: blur(4px);
     }
+    .open-btn {
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      z-index: 100;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
   <button class="back-btn" onclick="history.back()">‹</button>
+  <a id="open-btn" class="open-btn" target="_blank" title="Drive에서 열기">⛶</a>
   <iframe id="frame" allowfullscreen allow="autoplay; encrypted-media; fullscreen"></iframe>
   <script>
     const p = new URLSearchParams(location.search);
@@ -44,6 +64,8 @@
     if (id) {
       document.getElementById('frame').src =
         `https://drive.google.com/file/d/${id}/preview?authuser=${authuser}`;
+      document.getElementById('open-btn').href =
+        `https://drive.google.com/file/d/${id}/view?authuser=${authuser}`;
     }
   </script>
 </body>
