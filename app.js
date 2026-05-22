@@ -44,7 +44,15 @@ function updateFolderNav() {
   document.getElementById('folder-back-btn').classList.toggle('hidden', folderStack.length === 0);
 }
 
-document.getElementById('folder-back-btn').addEventListener('click', async () => {
+document.getElementById('folder-back-btn').addEventListener('click', () => history.back());
+
+async function openFolder(folder) {
+  history.pushState({ type: 'folder' }, '');
+  folderStack.push({ id: folder.id, name: folder.name });
+  await loadFolderContents(folder.id, folder.name);
+}
+
+async function folderBack() {
   folderStack.pop();
   if (folderStack.length === 0) {
     updateFolderNav();
@@ -59,11 +67,6 @@ document.getElementById('folder-back-btn').addEventListener('click', async () =>
     const parent = folderStack[folderStack.length - 1];
     await loadFolderContents(parent.id, parent.name);
   }
-});
-
-async function openFolder(folder) {
-  folderStack.push({ id: folder.id, name: folder.name });
-  await loadFolderContents(folder.id, folder.name);
 }
 
 async function loadFolderContents(folderId, folderName) {
@@ -222,9 +225,11 @@ function closePreview() {
 
 document.getElementById('preview-close-btn').addEventListener('click', () => history.back());
 
-window.addEventListener('popstate', () => {
+window.addEventListener('popstate', async () => {
   if (!previewModal.classList.contains('hidden')) {
     closePreview();
+  } else if (folderStack.length > 0) {
+    await folderBack();
   }
 });
 
