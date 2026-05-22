@@ -37,6 +37,8 @@ document.getElementById('search-input').addEventListener('keydown', e => {
 });
 
 let folderStack = [];
+let lastSearchResults = null;
+let lastSearchStatus = '';
 
 function updateFolderNav() {
   document.getElementById('folder-back-btn').classList.toggle('hidden', folderStack.length === 0);
@@ -47,7 +49,12 @@ document.getElementById('folder-back-btn').addEventListener('click', async () =>
   if (folderStack.length === 0) {
     updateFolderNav();
     document.getElementById('results-grid').innerHTML = '';
-    setStatus('🔍 검색어를 입력하고 검색 버튼을 눌러주세요');
+    if (lastSearchResults && lastSearchResults.length > 0) {
+      setStatus(lastSearchStatus);
+      renderGrid(lastSearchResults);
+    } else {
+      setStatus('🔍 검색어를 입력하고 검색 버튼을 눌러주세요');
+    }
   } else {
     const parent = folderStack[folderStack.length - 1];
     await loadFolderContents(parent.id, parent.name);
@@ -83,6 +90,7 @@ async function doSearch() {
   if (!keyword) return;
 
   folderStack = [];
+  lastSearchResults = null;
   updateFolderNav();
   const grid = document.getElementById('results-grid');
   grid.innerHTML = '';
@@ -107,7 +115,9 @@ async function doSearch() {
       return;
     }
 
-    setStatus(`✅ ${filtered.length}개의 파일을 찾았습니다`);
+    lastSearchStatus = `✅ ${filtered.length}개의 파일을 찾았습니다`;
+    lastSearchResults = filtered;
+    setStatus(lastSearchStatus);
     renderGrid(filtered);
   } catch (err) {
     setStatus('❌ 오류: ' + err.message);
@@ -199,6 +209,7 @@ function openPreview(file) {
     previewTypeIcon.textContent = icon;
   }
 
+  history.pushState({ preview: true }, '');
   previewModal.classList.remove('hidden');
 }
 
@@ -209,7 +220,13 @@ function closePreview() {
   currentFile = null;
 }
 
-document.getElementById('preview-close-btn').addEventListener('click', closePreview);
+document.getElementById('preview-close-btn').addEventListener('click', () => history.back());
+
+window.addEventListener('popstate', () => {
+  if (!previewModal.classList.contains('hidden')) {
+    closePreview();
+  }
+});
 
 let swipeStartX = 0;
 previewModal.addEventListener('touchstart', e => {
