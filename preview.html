@@ -65,7 +65,7 @@
       document.getElementById('frame').src =
         `https://drive.google.com/file/d/${id}/preview?authuser=${authuser}`;
       document.getElementById('open-btn').href =
-        `https://drive.google.com/file/d/${id}/view?authuser=${authuser}`;
+        `intent://drive.google.com/file/d/${id}/view#Intent;scheme=https;package=com.google.android.apps.docs;end`;
     }
   </script>
 </body>
